@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 8000
 
 # Comando para iniciar la aplicación (ajustar según la lógica de la app)
-CMD ["python", "main.py"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
