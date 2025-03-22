@@ -11,26 +11,26 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
     }
 
     const formData = new FormData();
-    formData.append("image", fileInput.files[0]);
+    formData.append("file", fileInput.files[0]);
 
     originalImage.src = URL.createObjectURL(fileInput.files[0]);
 
     try {
         // Enviar imagen para preprocesamiento
-        let response = await fetch("http://api_gateway:8000/preprocess/", {
+        let response = await fetch("/process-image/", {
             method: "POST",
             body: formData
         });
 
         if (!response.ok) throw new Error("Error en preprocesamiento");
 
-        const preprocessedData = await response.json();
-        processedImage.src = preprocessedData.processed_image_url;
+        const blob = await response.blob();
+        const processedImageUrl = URL.createObjectURL(blob);
+        processedImage.src = processedImageUrl;
 
-        // Enviar imagen preprocesada al modelo de predicción
-        response = await fetch("http://api_gateway:8000/predict/", {
+        response = await fetch("/predict/", {
             method: "POST",
-            body: JSON.stringify({ image_url: preprocessedData.processed_image_url }),
+            body: JSON.stringify({ image_url: processedImageUrl }),
             headers: { "Content-Type": "application/json" }
         });
 
