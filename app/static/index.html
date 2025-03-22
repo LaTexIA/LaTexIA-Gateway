@@ -3,14 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subir Imagen</title>
+    <title>Procesamiento de Imágenes</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
-    <h1>Subir Imagen para Preprocesamiento</h1>
-    <input type="file" id="imageInput" accept="image/*">
-    <button id="uploadButton">Enviar</button>
-    <h2>Imagen Procesada:</h2>
-    <img id="processedImage" src="" alt="Aquí aparecerá la imagen procesada">
+    <div class="container">
+        <h1>Reconocimiento de Fórmulas Matemáticas</h1>
+        <div class="upload-section">
+            <input type="file" id="imageInput" accept="image/*">
+            <button id="uploadButton">Subir y Procesar</button>
+        </div>
+
+        <div class="output-section">
+            <h2>Imagen Original</h2>
+            <img id="originalImage" src="" alt="Imagen subida">
+
+            <h2>Imagen Preprocesada</h2>
+            <img id="processedImage" src="" alt="Aquí aparecerá la imagen procesada">
+
+            <h2>Código LaTeX Generado</h2>
+            <pre id="latexCode"></pre>
+
+            <h2>Vista Previa de la Fórmula</h2>
+            <div id="latexPreview"></div>
+        </div>
+    </div>
 
     <script src="/static/scripts/upload.js"></script>
 </body>

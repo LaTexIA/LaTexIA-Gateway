@@ -1,25 +1,48 @@
-document.getElementById("uploadButton").addEventListener("click", async function () {
-  const input = document.getElementById("imageInput");
-  if (!input.files.length) {
-      alert("Por favor, selecciona una imagen.");
-      return;
-  }
+document.getElementById("uploadButton").addEventListener("click", async () => {
+    const fileInput = document.getElementById("imageInput");
+    const originalImage = document.getElementById("originalImage");
+    const processedImage = document.getElementById("processedImage");
+    const latexCode = document.getElementById("latexCode");
+    const latexPreview = document.getElementById("latexPreview");
 
-  const formData = new FormData();
-  formData.append("file", input.files[0]);
+    if (fileInput.files.length === 0) {
+        alert("Por favor, selecciona una imagen.");
+        return;
+    }
 
-  try {
-      const response = await fetch("/process-image/", {
-          method: "POST",
-          body: formData
-      });
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
 
-      if (!response.ok) throw new Error("Error en el procesamiento.");
+    originalImage.src = URL.createObjectURL(fileInput.files[0]);
 
-      const blob = await response.blob();
-      document.getElementById("processedImage").src = URL.createObjectURL(blob);
-  } catch (error) {
-      alert("Hubo un error al enviar la imagen.");
-      console.error(error);
-  }
+    try {
+        // Enviar imagen para preprocesamiento
+        let response = await fetch("/process-image/", {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) throw new Error("Error en preprocesamiento");
+
+        const blob = await response.blob();
+        const processedImageUrl = URL.createObjectURL(blob);
+        processedImage.src = processedImageUrl;
+
+        response = await fetch("/predict/", {
+            method: "POST",
+            body: JSON.stringify({ image_url: processedImageUrl }),
+            headers: { "Content-Type": "application/json" }
+        });
+
+        if (!response.ok) throw new Error("Error en la predicción");
+
+        const predictionData = await response.json();
+        latexCode.textContent = predictionData.latex_code;
+
+        // Actualizar vista previa con MathJax
+        latexPreview.innerHTML = `\\[${predictionData.latex_code}\\]`;
+        MathJax.typesetPromise();
+    } catch (error) {
+        alert("Error en el procesamiento: " + error.message);
+    }
 });
