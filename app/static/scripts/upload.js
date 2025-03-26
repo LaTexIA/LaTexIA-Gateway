@@ -28,10 +28,14 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
         const processedImageUrl = URL.createObjectURL(blob);
         processedImage.src = processedImageUrl;
 
+        // Preparar la imagen preprocesada (blob) para enviarla a predicción
+        const predictFormData = new FormData();
+        predictFormData.append("file", blob, "processed_image.jpg");
+
+        // Enviar la imagen preprocesada para predicción
         response = await fetch("/predict/", {
             method: "POST",
-            body: JSON.stringify({ image_url: processedImageUrl }),
-            headers: { "Content-Type": "application/json" }
+            body: predictFormData
         });
 
         if (!response.ok) throw new Error("Error en la predicción");

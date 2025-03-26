@@ -4,10 +4,12 @@ from fastapi.responses import StreamingResponse
 from app.adapters.preprocessing_adapter import PreprocessingAdapter
 from app.core.preprocessing_service import PreprocessingService
 
+from app.core.config import settings
+
 router = APIRouter()
 
 # Configuración del adaptador y servicio
-preprocessing_adapter = PreprocessingAdapter(api_url="http://preprocessing-service:8001")
+preprocessing_adapter = PreprocessingAdapter(api_url=settings.PREPROCESSING_URL)
 preprocessing_service = PreprocessingService(preprocessing_port=preprocessing_adapter)
 
 @router.post("/process-image/")
