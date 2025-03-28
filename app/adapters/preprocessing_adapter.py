@@ -13,4 +13,4 @@ class PreprocessingAdapter(PreprocessingPort):
         response = requests.post(f"{self.api_url}/preprocess/", files=files)
         response.raise_for_status()  # Verificar que la petición fue exitosa
         
-        return BytesIO(response.content)  # Devolvemos la imagen procesada
+        return response.json()  # Devolvemos la imagen procesada
