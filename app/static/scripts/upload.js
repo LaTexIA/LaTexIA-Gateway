@@ -56,9 +56,9 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
             const latexHoles = {
                 "0": 1, "6": 1, "8" : 2, "9" : 1, 
                 "a": 1, "A": 1, "b": 1, "B": 1, "d" : 1, "D" :1,
-                "e" : 1, "g" : 1, "o" : 1, "O" : 1, "p": 1, "P" : 1, 
+                "g" : 1, "o" : 1, "O" : 1, "p": 1, "P" : 1, 
                 "q": 1, "Q": 1, "\\emptyset": 1,
-                "\\alpha": 1, "\\beta": 2, "\\theta": 2, "\\phi": 2, "\\varphi": 1,
+                "\\alpha": 1, "\\beta": 2, "\\theta": 2, "\\phi": 2, "\\gamma": 1,
                 "\\delta": 1, "\\varrho": 1, "\\varpi": 1,
                 "\\infty": 2
             };
@@ -73,13 +73,19 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
                 }
 
                 let comando = latexComandos[i];
+                
+                if (comando == "-" && latexComandos[i+i] =="-"){
+                    i+=2;
+                    resultado.push("=");
+                    continue;
+                }
+
+                resultado.push(comando);
 
                 if (latexHoles.hasOwnProperty(comando)) {
                     skip = latexHoles[comando]; // Omitir los siguientes 'n' comandos
                     continue; // No agregar el comando con agujeros
                 }
-
-                resultado.push(comando);
             }
 
             return resultado;
