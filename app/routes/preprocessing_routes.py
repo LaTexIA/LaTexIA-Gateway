@@ -16,5 +16,5 @@ preprocessing_service = PreprocessingService(preprocessing_port=preprocessing_ad
 async def process_image(file: UploadFile = File(...)):
     """ Recibe una imagen y la envía al servicio de preprocesamiento """
     image_data = BytesIO(await file.read())
-    processed_image = await preprocessing_service.preprocess_image(image_data)
-    return StreamingResponse(processed_image, media_type="image/jpeg")
+    processed_data = await preprocessing_service.preprocess_image(image_data)
+    return processed_data

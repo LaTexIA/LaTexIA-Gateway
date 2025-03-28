@@ -9,4 +9,4 @@ class LatexRecognitionAdapter:
     async def recognize_formula(self, image_data: bytes):
         """Envía la imagen al servicio de reconocimiento de LaTeX y devuelve el código LaTeX"""
         response = await self.client.post(f"{self.api_url}/predict/", files={"file": image_data})
-        return response.json()["latex_code"]
+        return response.json()["predicted_class"]

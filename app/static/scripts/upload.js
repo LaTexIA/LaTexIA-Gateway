@@ -1,7 +1,7 @@
 document.getElementById("uploadButton").addEventListener("click", async () => {
     const fileInput = document.getElementById("imageInput");
     const originalImage = document.getElementById("originalImage");
-    const processedImage = document.getElementById("processedImage");
+    const processedImagesContainer = document.getElementById("processedImagesContainer");
     const latexCode = document.getElementById("latexCode");
     const latexPreview = document.getElementById("latexPreview");
 
@@ -12,7 +12,6 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
 
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
-
     originalImage.src = URL.createObjectURL(fileInput.files[0]);
 
     try {
@@ -24,28 +23,57 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
 
         if (!response.ok) throw new Error("Error en preprocesamiento");
 
-        const blob = await response.blob();
-        const processedImageUrl = URL.createObjectURL(blob);
-        processedImage.src = processedImageUrl;
+        const processedData = await response.json();
+        console.log("Processed Data:", processedData);
+        const images = processedData.images;
 
-        // Preparar la imagen preprocesada (blob) para enviarla a predicción
-        const predictFormData = new FormData();
-        predictFormData.append("file", blob, "processed_image.jpg");
-
-        // Enviar la imagen preprocesada para predicción
-        response = await fetch("/predict/", {
-            method: "POST",
-            body: predictFormData
+        // Limpiar el contenedor y mostrar todas las imágenes decodificadas
+        processedImagesContainer.innerHTML = "";
+        images.forEach(encoded => {
+            const img = document.createElement("img");
+            img.src = `data:image/png;base64,${encoded}`;
+            processedImagesContainer.appendChild(img);
         });
 
-        if (!response.ok) throw new Error("Error en la predicción");
+        // Función para convertir base64 a Blob
+        function base64ToBlob(b64Data, contentType = "image/png", sliceSize = 512) {
+            const byteCharacters = atob(b64Data);
+            const byteArrays = [];
+            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                const slice = byteCharacters.slice(offset, offset + sliceSize);
+                const byteNumbers = new Array(slice.length);
+                for (let i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+            }
+            return new Blob(byteArrays, { type: contentType });
+        }
 
-        const predictionData = await response.json();
-        latexCode.textContent = predictionData.latex_code;
+        // Iterar sobre cada imagen, enviar a la predicción y almacenar el resultado
+        const predictions = [];
+        for (const encoded of images) {
+            const blob = base64ToBlob(encoded);
+            const predictFormData = new FormData();
+            predictFormData.append("file", blob, "processed_image.jpg");
 
-        // Actualizar vista previa con MathJax
-        latexPreview.innerHTML = `\\[${predictionData.latex_code}\\]`;
-        MathJax.typesetPromise();
+            const predictResponse = await fetch("/predict/", {
+                method: "POST",
+                body: predictFormData
+            });
+            if (!predictResponse.ok) {
+                predictions.push("Error en la predicción");
+                continue;
+            }
+            const predictionData = await predictResponse.json();
+            predictions.push(predictionData.latex_code);
+        }
+
+        // Mostrar resultados de la predicción
+        latexCode.textContent = predictions.join(" ");
+        //latexPreview.innerHTML = predictions.map(code => `\\[${code}\\]`).join("<br>");
+        //MathJax.typesetPromise();
     } catch (error) {
         alert("Error en el procesamiento: " + error.message);
     }
