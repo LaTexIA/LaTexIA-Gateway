@@ -51,6 +51,41 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
             return new Blob(byteArrays, { type: contentType });
         }
 
+        // Filtrado de los caracteres con agujeros
+        function filtrarComandos(latexComandos) {
+            const latexHoles = {
+                "0": 1, "6": 1, "8" : 2, "9" : 1, 
+                "a": 1, "A": 1, "b": 1, "B": 1, "d" : 1, "D" :1,
+                "e" : 1, "g" : 1, "o" : 1, "O" : 1, "p": 1, "P" : 1, 
+                "q": 1, "Q": 1, "\\emptyset": 1,
+                "\\alpha": 1, "\\beta": 2, "\\theta": 2, "\\phi": 2, "\\varphi": 1,
+                "\\delta": 1, "\\varrho": 1, "\\varpi": 1,
+                "\\infty": 2
+            };
+
+            let resultado = [];
+            let skip = 0;
+
+            for (let i = 0; i < latexComandos.length; i++) {
+                if (skip > 0) {
+                    skip--; // Saltar este comando
+                    continue;
+                }
+
+                let comando = latexComandos[i];
+
+                if (latexHoles.hasOwnProperty(comando)) {
+                    skip = latexHoles[comando]; // Omitir los siguientes 'n' comandos
+                    continue; // No agregar el comando con agujeros
+                }
+
+                resultado.push(comando);
+            }
+
+            return resultado;
+        }
+
+
         // Iterar sobre cada imagen, enviar a la predicción y almacenar el resultado
         const predictions = [];
         for (const encoded of images) {
@@ -69,9 +104,10 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
             const predictionData = await predictResponse.json();
             predictions.push(predictionData.latex_code);
         }
+        let f_predictions = filtrarComandos(predictions)
 
         // Mostrar resultados de la predicción
-        latexCode.textContent = predictions.join(" ");
+        latexCode.textContent = f_predictions.join(" ");
         //latexPreview.innerHTML = predictions.map(code => `\\[${code}\\]`).join("<br>");
         //MathJax.typesetPromise();
     } catch (error) {
