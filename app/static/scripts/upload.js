@@ -74,8 +74,8 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
 
                 let comando = latexComandos[i];
                 
-                if (comando == "-" && latexComandos[i+i] =="-"){
-                    i+=2;
+                if (comando === "-" && latexComandos[i+i] ==="-"){
+                    i++;
                     resultado.push("=");
                     continue;
                 }
@@ -115,6 +115,7 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
         function convertToLatex(preds) {
             // Mapeo de tokens a comandos LaTeX
             const replacements = {
+                "times": "X",
                 "alpha": "\\alpha",
                 "beta": "\\beta",
                 "theta": "\\theta",
