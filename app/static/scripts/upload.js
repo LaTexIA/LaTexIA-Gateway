@@ -60,7 +60,8 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
                 "q": 1, "Q": 1, "\\emptyset": 1,
                 "\\alpha": 1, "\\beta": 2, "\\theta": 2, "\\phi": 2, "\\gamma": 1,
                 "\\delta": 1, "\\varrho": 1, "\\varpi": 1,
-                "\\infty": 2
+                "\\infty": 2,
+                "\\forall": 1,
             };
 
             let resultado = [];
@@ -146,8 +147,8 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
         }
 
         // Convertir las predicciones a notación LaTeX
-        let f_predictions = filtrarComandos(predictions);
         let latexPredictions = convertToLatex(f_predictions);
+        let f_predictions = filtrarComandos(predictions);
 
         // Mostrar resultados de la predicción
         latexCode.textContent = latexPredictions.join(" ");
