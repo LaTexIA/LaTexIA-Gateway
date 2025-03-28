@@ -67,7 +67,7 @@ pre {
 
 #latexPreview {
   min-height: 150px; /* Altura mínima */
-  font-size: 2.5em;  /* Aumenta el tamaño de la fuente */
+  font-size: 1.7em;  /* Aumenta el tamaño de la fuente */
   padding: 10px;     /* Espaciado interno */
   border: 1px solid #ccc; /* Opcional: un borde para distinguir el área */
 }

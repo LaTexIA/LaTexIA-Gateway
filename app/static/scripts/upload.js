@@ -82,14 +82,6 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
 
                 resultado.push(comando);
 
-                if (comando == "-" && latexComandos[i+i] =="-"){
-                    i+=2;
-                    resultado.push("=");
-                    continue;
-                }
-
-                resultado.push(comando);
-
                 if (latexHoles.hasOwnProperty(comando)) {
                     skip = latexHoles[comando]; // Omitir los siguientes 'n' comandos
                     continue; // No agregar el comando con agujeros
