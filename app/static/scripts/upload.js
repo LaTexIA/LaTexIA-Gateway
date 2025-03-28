@@ -139,6 +139,7 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
                 "Theta": "\\Theta",
                 "Phi": "\\Phi",
                 "Psi": "\\Psi",
+                "sum": "\\sum",
                 // Agrega aquí los mapeos que necesites
             };
 
