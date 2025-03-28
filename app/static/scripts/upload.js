@@ -147,14 +147,14 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
         }
 
         // Convertir las predicciones a notación LaTeX
-        let latexPredictions = convertToLatex(f_predictions);
-        let f_predictions = filtrarComandos(predictions);
+        let latexPredictions = convertToLatex(predictions);
+        let f_predictions = filtrarComandos(latexPredictions);
 
         // Mostrar resultados de la predicción
-        latexCode.textContent = latexPredictions.join(" ");
+        latexCode.textContent = f_predictions.join(" ");
         // Mostrar resultados de la predicción (LaTeX renderizado)
 
-        joinedLatex = latexPredictions.join(" ");
+        joinedLatex = f_predictions.join(" ");
         // Si deseas que MathJax renderice la fórmula, asigna el contenido con delimitadores:
         latexPreview.innerHTML = `\\(${joinedLatex}\\)`;
         MathJax.typesetPromise();
