@@ -115,7 +115,7 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
         function convertToLatex(preds) {
             // Mapeo de tokens a comandos LaTeX
             const replacements = {
-                "times": X,
+                "times": "X",
                 "alpha": "\\alpha",
                 "beta": "\\beta",
                 "theta": "\\theta",
