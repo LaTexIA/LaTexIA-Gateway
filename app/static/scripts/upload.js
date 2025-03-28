@@ -82,6 +82,14 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
 
                 resultado.push(comando);
 
+                if (comando == "-" && latexComandos[i+i] =="-"){
+                    i+=2;
+                    resultado.push("=");
+                    continue;
+                }
+
+                resultado.push(comando);
+
                 if (latexHoles.hasOwnProperty(comando)) {
                     skip = latexHoles[comando]; // Omitir los siguientes 'n' comandos
                     continue; // No agregar el comando con agujeros
@@ -110,12 +118,52 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
             const predictionData = await predictResponse.json();
             predictions.push(predictionData.latex_code);
         }
-        let f_predictions = filtrarComandos(predictions)
+
+        // Función para convertir los tokens predichos a notación LaTeX
+        function convertToLatex(preds) {
+            // Mapeo de tokens a comandos LaTeX
+            const replacements = {
+                "alpha": "\\alpha",
+                "beta": "\\beta",
+                "theta": "\\theta",
+                "phi": "\\phi",
+                "varphi": "\\varphi",
+                "delta": "\\delta",
+                "varrho": "\\varrho",
+                "varpi": "\\varpi",
+                "infty": "\\infty",
+                "emptyset": "\\emptyset",
+                "mu": "\\mu",
+                "sigma": "\\sigma",
+                "pi": "\\pi",
+                "gamma": "\\gamma",
+                "Gamma": "\\Gamma",
+                "Delta": "\\Delta",
+                "Omega": "\\Omega",
+                "Sigma": "\\Sigma",
+                "Pi": "\\Pi",
+                "Theta": "\\Theta",
+                "Phi": "\\Phi",
+                "Psi": "\\Psi",
+                // Agrega aquí los mapeos que necesites
+            };
+
+            // Reemplazamos cada token si existe un comando asociado
+            return preds.map(token => replacements[token] || token);
+        }
+
+        // Convertir las predicciones a notación LaTeX
+        let f_predictions = filtrarComandos(predictions);
+        let latexPredictions = convertToLatex(f_predictions);
 
         // Mostrar resultados de la predicción
-        latexCode.textContent = f_predictions.join(" ");
-        //latexPreview.innerHTML = predictions.map(code => `\\[${code}\\]`).join("<br>");
-        //MathJax.typesetPromise();
+        latexCode.textContent = latexPredictions.join(" ");
+        // Mostrar resultados de la predicción (LaTeX renderizado)
+
+        joinedLatex = latexPredictions.join(" ");
+        // Si deseas que MathJax renderice la fórmula, asigna el contenido con delimitadores:
+        latexPreview.innerHTML = `\\(${joinedLatex}\\)`;
+        MathJax.typesetPromise();
     } catch (error) {
         alert("Error en el procesamiento: " + error.message);
     }
